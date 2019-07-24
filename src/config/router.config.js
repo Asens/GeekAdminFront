@@ -25,17 +25,46 @@ export const asyncRouterMap = [
             component: () => import('@/views/dashboard/Analysis'),
             meta: { title: '分析页', keepAlive: false, permission: [ 'dashboard' ] }
           },
-          // 外部链接
-          {
-            path: 'https://www.baidu.com/',
-            name: 'Monitor',
-            meta: { title: '监控页（外部）', target: '_blank' }
-          },
           {
             path: '/dashboard/workplace',
             name: 'Workplace',
             component: () => import('@/views/dashboard/Workplace'),
             meta: { title: '工作台', keepAlive: true, permission: [ 'dashboard' ] }
+          }
+        ]
+      },
+
+      // system
+      {
+        path: '/system',
+        name: 'system',
+        component: PageView,
+        meta: { title: '系统管理', icon: 'slack', permission: [ 'system' ] },
+        redirect: '/system/icon-selector',
+        children: [
+          {
+            path: '/system/menu/list',
+            name: 'MenuList',
+            component: () => import('@/views/menu/MenuList'),
+            meta: { title: '菜单管理', keepAlive: true, permission: [ 'system.menu' ] }
+          },
+          {
+            path: '/system/list/tree-list',
+            name: 'TreeList',
+            component: () => import('@/views/other/TreeList'),
+            meta: { title: '树目录表格', keepAlive: true, permission: [ 'system' ] }
+          },
+          {
+            path: '/system/list/system-role',
+            name: 'SystemRole',
+            component: () => import('@/views/role/RoleList'),
+            meta: { title: '角色列表2', keepAlive: true, permission: [ 'system' ] }
+          },
+          {
+            path: '/system/list/permission-list',
+            name: 'PermissionList',
+            component: () => import('@/views/other/PermissionList'),
+            meta: { title: '权限列表', keepAlive: true, permission: [ 'system' ] }
           }
         ]
       },

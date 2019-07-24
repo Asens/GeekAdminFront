@@ -8,7 +8,7 @@ import store from './store/'
 import { VueAxios } from './utils/request'
 
 // mock
-import './mock'
+import './api'
 
 import bootstrap from './core/bootstrap'
 import './core/use'
