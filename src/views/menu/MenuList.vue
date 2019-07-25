@@ -7,21 +7,20 @@
       <span slot="status" slot-scope="text">
         <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
       </span>
+      <span slot="isMenu" slot-scope="text">
+        <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
+      </span>
+      <span slot="icon" slot-scope="text">
+        <a-icon :type="text" />
+      </span>
       <span slot="action" slot-scope="text,record">
         <a @click="$refs.createModal.add(record.code)">添加子级</a>
         <a-divider type="vertical" />
-        <a href="javascript:;">编辑</a>
+        <a @click="$refs.createModal.edit(record.code)">编辑</a>
         <a-divider type="vertical" />
-        <a-dropdown>
-          <a class="ant-dropdown-link">
-            更多 <a-icon type="down" />
-          </a>
-          <a-menu slot="overlay">
-            <a-menu-item>
-              <a href="javascript:;">删除</a>
-            </a-menu-item>
-          </a-menu>
-        </a-dropdown>
+        <a>
+          <a-popconfirm title="删除该菜单将同时删除其子菜单,确认删除?" @confirm="deleteMenu(record.id)" okText="是" cancelText="否" >删除</a-popconfirm>
+        </a>
       </span>
     </a-table>
 
@@ -30,9 +29,8 @@
 </template>
 
 <script>
-import { getMenuTree } from '@/api/menu'
+import { getMenuTree, deleteMenu } from '@/api/menu'
 import MenuAdd from './MenuAdd'
-
 const statusMap = {
   0: {
     status: 'default',
@@ -67,12 +65,26 @@ export default {
     },
     statusTypeFilter (type) {
       return statusMap[type].status
+    },
+    menuFilter (type) {
+      return statusMap[type].text
+    },
+    menuTypeFilter (type) {
+      return statusMap[type].status
     }
   },
   methods: {
     handleOk () {
       getMenuTree().then(res => {
         this.data = res.result
+      })
+    },
+    deleteMenu (id) {
+      deleteMenu({ id: id }).then(res => {
+        getMenuTree().then(res => {
+          this.data = res.result
+        })
+        this.$message.success('删除成功')
       })
     }
   }
@@ -89,13 +101,15 @@ const columns = [{
   dataIndex: 'parentCode'
 }, {
   title: '图标',
-  dataIndex: 'icon'
+  dataIndex: 'icon',
+  scopedSlots: { customRender: 'icon' }
 }, {
   title: '排序',
-  dataIndex: 'order'
+  dataIndex: 'sortNum'
 }, {
   title: '是否是菜单',
-  dataIndex: 'menu'
+  dataIndex: 'isMenu',
+  scopedSlots: { customRender: 'isMenu' }
 }, {
   title: '状态',
   dataIndex: 'status',

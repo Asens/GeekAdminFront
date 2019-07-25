@@ -3,12 +3,21 @@
     title="新建菜单"
     :width="640"
     :visible="visible"
+    :maskClosable="false"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
     @cancel="handleCancel"
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
+        <a-form-item
+          label="id"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          style="display: none"
+        >
+          <a-input type="hidden" v-decorator="['id']" />
+        </a-form-item>
         <a-form-item
           label="菜单名称"
           :labelCol="labelCol"
@@ -22,7 +31,7 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input v-decorator="['code', {rules: [{required: true, message: '请输入菜单编号'}]}]" />
+          <a-input :disabled="codeDisabled" v-decorator="['code', {rules: [{required: true, message: '请输入菜单编号'}]}]" />
         </a-form-item>
 
         <a-form-item
@@ -38,7 +47,7 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-radio-group defaultValue="1" v-decorator="['isMenu',{initialValue:'1'}]">
+          <a-radio-group v-decorator="['isMenu',{initialValue:'1'}]">
             <a-radio value="1">
               菜单
             </a-radio>
@@ -93,7 +102,7 @@
 </template>
 
 <script>
-import { saveMenu } from '@/api/menu'
+import { saveMenu, menuInfo } from '@/api/menu'
 
 export default {
   name: 'MenuAdd',
@@ -110,16 +119,40 @@ export default {
       },
       visible: false,
       confirmLoading: false,
-
+      codeDisabled: false,
       form: this.$form.createForm(this)
     }
   },
   methods: {
     add (parentCode) {
+      this.form.resetFields()
+      this.codeDisabled = false
       this.visible = true
       if (parentCode !== undefined) {
         this.parentCode = parentCode
       }
+    },
+    edit (code) {
+      this.form.resetFields()
+      this.confirmLoading = true
+      this.codeDisabled = true
+      this.visible = true
+      menuInfo({ code: code }).then(res => {
+        const menu = res.result
+        console.log('menu :' + JSON.stringify(menu))
+        this.form.setFieldsValue({
+          name: menu.name,
+          id: menu.id,
+          code: menu.code,
+          parentCode: menu.parentCode,
+          viewPage: menu.viewPage,
+          icon: menu.icon,
+          sortNum: menu.sortNum,
+          status: menu.status.toString(),
+          isMenu: menu.isMenu.toString()
+        })
+        this.confirmLoading = false
+      })
     },
     handleSubmit () {
       const { form: { validateFields } } = this
