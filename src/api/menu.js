@@ -2,6 +2,7 @@ import { axios } from '@/utils/request'
 
 const api = {
   menuTree: '/api/sys/permission/menuTree',
+  menus: '/api/sys/user/menus',
   menuInfo: '/api/sys/permission/info',
   deleteMenu: '/api/sys/permission/delete',
   saveMenu: '/api/sys/permission/save'
@@ -14,6 +15,17 @@ export function getMenuTree (parameter) {
     url: api.menuTree,
     method: 'get',
     params: parameter
+  })
+}
+
+/**
+ * 获取后端路由信息的 axios API
+ * @returns {Promise}
+ */
+export const menus = () => {
+  return axios({
+    url: api.menus,
+    method: 'get'
   })
 }
 

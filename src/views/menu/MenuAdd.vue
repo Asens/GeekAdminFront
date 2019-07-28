@@ -58,11 +58,11 @@
         </a-form-item>
 
         <a-form-item
-          label="页面名称"
+          label="组件名称"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input v-decorator="['viewPage']" />
+          <a-input v-decorator="['component']" />
         </a-form-item>
 
         <a-form-item
@@ -145,7 +145,7 @@ export default {
           id: menu.id,
           code: menu.code,
           parentCode: menu.parentCode,
-          viewPage: menu.viewPage,
+          component: menu.component,
           icon: menu.icon,
           sortNum: menu.sortNum,
           status: menu.status.toString(),

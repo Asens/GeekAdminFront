@@ -2,10 +2,11 @@ import { axios } from '@/utils/request'
 
 const api = {
   user: '/user',
-  role: '/role',
+  roleList: '/api/sys/role/list',
+  saveRole: '/api/sys/role/save',
   service: '/service',
   permission: '/permission',
-  permissionNoPager: '/permission/no-pager',
+  permissionNoPager: '/api/sys/permission/menuList',
   orgTree: '/org/tree'
 }
 
@@ -21,8 +22,16 @@ export function getUserList (parameter) {
 
 export function getRoleList (parameter) {
   return axios({
-    url: api.role,
+    url: api.roleList,
     method: 'get',
+    params: parameter
+  })
+}
+
+export function saveRole (parameter) {
+  return axios({
+    url: api.saveRole,
+    method: 'post',
     params: parameter
   })
 }

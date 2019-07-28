@@ -18,8 +18,8 @@
             <h3>角色：{{ mdl.name }}</h3>
           </div>
           <a-form :form="form" :layout="isMobile() ? 'vertical' : 'horizontal'">
-            <a-form-item label="唯一键">
-              <a-input v-decorator="[ 'id', {rules: [{ required: true, message: 'Please input unique key!' }]} ]" placeholder="请填写唯一键" />
+            <a-form-item label="唯一键" style="display: none">
+              <a-input v-decorator="[ 'id']" placeholder="请填写唯一键" />
             </a-form-item>
 
             <a-form-item label="角色名称">
@@ -40,7 +40,9 @@
             <a-form-item label="拥有权限">
               <a-row :gutter="16" v-for="(permission, index) in permissions" :key="index">
                 <a-col :xl="4" :lg="24">
-                  {{ permission.name }}：
+                  <a-checkbox :checked="permission.menuSelected" @change="onChangeMenuSelected(permission)">
+                    {{ permission.name }}
+                  </a-checkbox><span v-if="permission.actionsOptions.length > 0">： </span>
                 </a-col>
                 <a-col :xl="20" :lg="24">
                   <a-checkbox
@@ -55,6 +57,13 @@
               </a-row>
             </a-form-item>
 
+            <a-form-item
+              :wrapperCol="{ span: 24 }"
+              style="text-align: center"
+            >
+              <a-button htmlType="submit" type="primary" @click="handleSubmit">保存</a-button>
+            </a-form-item>
+
           </a-form>
         </div>
       </a-col>
@@ -63,9 +72,10 @@
 </template>
 
 <script>
-import { getRoleList, getPermissions } from '@/api/manage'
+import { getRoleList, getPermissions, saveRole } from '@/api/manage'
 import { mixinDevice } from '@/utils/mixin'
 import { actionToObject } from '@/utils/permissions'
+
 import pick from 'lodash.pick'
 
 export default {
@@ -82,15 +92,7 @@ export default {
     }
   },
   created () {
-    getRoleList().then((res) => {
-      this.roles = res.result.data
-      this.roles.push({
-        id: '-1',
-        name: '新增角色',
-        describe: '新增一个角色'
-      })
-      console.log('this.roles', this.roles)
-    })
+    this.refreshRoleList()
     this.loadPermissions()
   },
   methods: {
@@ -98,40 +100,93 @@ export default {
       console.log(val)
     },
 
+    refreshRoleList () {
+      getRoleList().then((res) => {
+        this.roles = res.result
+        this.roles.push({
+          id: '-1',
+          name: '新增角色',
+          describe: '新增一个角色'
+        })
+        console.log('this.roles :', JSON.stringify(this.roles))
+      })
+    },
+
     add () {
       this.edit({ id: 0 })
     },
 
+    handleSubmit () {
+      const { form: { validateFields } } = this
+      validateFields((errors, values) => {
+        if (!errors) {
+          console.log('values :', JSON.stringify(this.permissions))
+          let selected = ''
+          this.permissions.forEach(t => {
+            if (t.menuSelected) {
+              selected += t.code + ','
+            }
+            if (t.selected.length > 0) {
+              t.selected.forEach(p => {
+                selected += p + ','
+              })
+            }
+          })
+          if (selected.length > 0) {
+            selected = selected.substring(0, selected.length - 1)
+          }
+          values.permissions = selected
+          saveRole(values).then(res => {
+            if (res.status === 'success') {
+              this.$message.success('修改成功')
+              this.refreshRoleList()
+            }
+          })
+        }
+      })
+    },
+
     edit (record) {
+      this.form.resetFields()
       this.mdl = Object.assign({}, record)
       // 有权限表，处理勾选
       if (this.mdl.permissions && this.permissions) {
         // 先处理要勾选的权限结构
         const permissionsAction = {}
+        const permissionMenus = []
         this.mdl.permissions.forEach(permission => {
+          console.log('permission', JSON.stringify(permission))
+          permissionMenus.push(permission.permissionId)
           permissionsAction[permission.permissionId] = permission.actionEntitySet.map(entity => entity.action)
         })
 
-        console.log('permissionsAction', permissionsAction)
+        console.log('permissionMenus', JSON.stringify(permissionMenus))
+
         // 把权限表遍历一遍，设定要勾选的权限 action
         this.permissions.forEach(permission => {
-          const selected = permissionsAction[permission.id]
+          const selected = permissionsAction[permission.code]
           permission.selected = selected || []
+          permission.menuSelected = false
+          if (permissionMenus.includes(permission.code)) {
+            permission.menuSelected = true
+          }
           this.onChangeCheck(permission)
         })
-
-        console.log('this.permissions', this.permissions)
       }
 
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.mdl, 'id', 'name', 'status', 'describe'))
       })
-      console.log('this.mdl', this.mdl)
     },
 
     onChangeCheck (permission) {
       permission.indeterminate = !!permission.selected.length && (permission.selected.length < permission.actionsOptions.length)
       permission.checkedAll = permission.selected.length === permission.actionsOptions.length
+    },
+
+    onChangeMenuSelected (permission) {
+      console.log('onChangeMenuSelected permission:', permission)
+      permission.menuSelected = !permission.menuSelected
     },
     onChangeCheckAll (e, permission) {
       console.log('permission:', permission)
@@ -146,9 +201,10 @@ export default {
       getPermissions().then(res => {
         const result = res.result
         this.permissions = result.map(permission => {
-          const options = actionToObject(permission.actionData)
+          const options = actionToObject(JSON.stringify(permission.actionData))
           permission.checkedAll = false
           permission.selected = []
+          permission.menuSelected = false
           permission.indeterminate = false
           permission.actionsOptions = options.map(option => {
             return {

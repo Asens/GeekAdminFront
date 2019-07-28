@@ -17,19 +17,19 @@ export const asyncRouterMap = [
         name: 'dashboard',
         redirect: '/dashboard/workplace',
         component: RouteView,
-        meta: { title: '仪表盘', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
+        meta: { title: '仪表盘', keepAlive: true, icon: bxAnaalyse },
         children: [
           {
             path: '/dashboard/analysis',
             name: 'Analysis',
             component: () => import('@/views/dashboard/Analysis'),
-            meta: { title: '分析页', keepAlive: false, permission: [ 'dashboard' ] }
+            meta: { title: '分析页', keepAlive: false }
           },
           {
             path: '/dashboard/workplace',
             name: 'Workplace',
             component: () => import('@/views/dashboard/Workplace'),
-            meta: { title: '工作台', keepAlive: true, permission: [ 'dashboard' ] }
+            meta: { title: '工作台', keepAlive: true }
           }
         ]
       },
@@ -39,14 +39,20 @@ export const asyncRouterMap = [
         path: '/system',
         name: 'system',
         component: PageView,
-        meta: { title: '系统管理', icon: 'slack', permission: [ 'system' ] },
+        meta: { title: '系统管理', icon: 'slack' },
         redirect: '/system/icon-selector',
         children: [
           {
             path: '/system/menu/list',
             name: 'MenuList',
             component: () => import('@/views/menu/MenuList'),
-            meta: { title: '菜单管理', keepAlive: true, permission: [ 'system.menu' ] }
+            meta: { title: '菜单管理', keepAlive: true  }
+          },
+          {
+            path: '/system/role/list',
+            name: 'RoleList',
+            component: () => import('@/views/role/RoleList'),
+            meta: { title: '角色管理', keepAlive: true }
           },
           {
             path: '/system/list/tree-list',
