@@ -8,7 +8,8 @@
         <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
       </span>
       <span slot="isMenu" slot-scope="text">
-        <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
+        <a-tag v-if="text===1" color="blue">菜单</a-tag>
+        <a-tag v-if="text===0" color="orange">功能按钮</a-tag>
       </span>
       <span slot="icon" slot-scope="text">
         <a-icon :type="text" />
