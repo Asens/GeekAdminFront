@@ -46,7 +46,7 @@ export const asyncRouterMap = [
             path: '/system/menu/list',
             name: 'MenuList',
             component: () => import('@/views/menu/MenuList'),
-            meta: { title: '菜单管理', keepAlive: true  }
+            meta: { title: '菜单管理', keepAlive: true }
           },
           {
             path: '/system/role/list',

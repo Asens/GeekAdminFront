@@ -66,6 +66,14 @@
         </a-form-item>
 
         <a-form-item
+          label="页面地址"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+        >
+          <a-input v-decorator="['realPath']" />
+        </a-form-item>
+
+        <a-form-item
           label="图标"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
@@ -148,6 +156,7 @@ export default {
           component: menu.component,
           icon: menu.icon,
           sortNum: menu.sortNum,
+          realPath: menu.realPath,
           status: menu.status.toString(),
           isMenu: menu.isMenu.toString()
         })

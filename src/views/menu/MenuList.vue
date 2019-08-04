@@ -18,6 +18,7 @@
         <a @click="$refs.createModal.add(record.code)">添加子级</a>
         <a-divider type="vertical" />
         <a @click="$refs.createModal.edit(record.code)">编辑</a>
+        <!--<a @click="open('/system/menu/edit/'+record.id)">编辑</a>-->
         <a-divider type="vertical" />
         <a>
           <a-popconfirm title="删除该菜单将同时删除其子菜单,确认删除?" @confirm="deleteMenu(record.id)" okText="是" cancelText="否" >删除</a-popconfirm>
@@ -75,6 +76,9 @@ export default {
     }
   },
   methods: {
+    open (path) {
+      window.open(this.$router.resolve({ path: path }).href, '_blank')
+    },
     handleOk () {
       getMenuTree().then(res => {
         this.data = res.result

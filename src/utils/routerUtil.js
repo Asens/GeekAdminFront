@@ -15,8 +15,10 @@ const constantRouterComponents = {
   analysis: () => import('@/views/dashboard/Analysis'),
   workplace: () => import('@/views/dashboard/Workplace'),
   monitor: () => import('@/views/dashboard/Monitor'),
+  MenuAdd: () => import('@/views/form/BasicForm'),
   MenuList: () => import('@/views/menu/MenuList'),
-  RoleList: () => import('@/views/role/RoleList')
+  RoleList: () => import('@/views/role/RoleList'),
+  UserList: () => import('@/views/user/UserList')
   // ...more
 }
 
@@ -36,11 +38,25 @@ const notFoundRouter = {
 export const generatorDynamicRouter = () => {
   return new Promise((resolve, reject) => {
     menus().then(res => {
-      console.log('routerMap1 :', JSON.stringify(res))
-      console.log('routerMap2 :', JSON.stringify(res.result))
       const result = res.result
+      console.log('router result :' + JSON.stringify(res.result))
       const routers = generator(result)
-      console.log('routers :', JSON.stringify(routers))
+      console.log('buttons :' + JSON.stringify(generatorPages(result)))
+
+      const pageRouter = {
+        path: '/',
+        component: BasicLayout,
+        meta: { title: '首页' },
+        children: [
+          {
+            path: '/pageRouterView',
+            component: PageView,
+            meta: { title: '页面' },
+            children: generatorPages(result)
+          }
+        ]
+      }
+      routers.push(pageRouter)
       routers.push(notFoundRouter)
       resolve(routers)
     }).catch(err => {
@@ -58,9 +74,13 @@ export const generatorDynamicRouter = () => {
  */
 export const generator = (routerMap, parent) => {
   return routerMap.map(item => {
+    let path = item.realPath
+    if (path === undefined || path === '' || path === null) {
+      path = `${parent && parent.path || ''}/${item.key}`
+    }
     const currentRouter = {
       // 路由地址 动态拼接生成如 /dashboard/workplace
-      path: `${parent && parent.path || ''}/${item.key}`,
+      path: path,
       // 路由名称，建议唯一
       name: item.key || '',
       // 该路由对应页面的 组件
@@ -73,10 +93,53 @@ export const generator = (routerMap, parent) => {
     // 重定向
     item.redirect && (currentRouter.redirect = item.redirect)
     // 是否有子菜单，并递归处理
-    if (item.children && item.children.length > 0) {
+    if (item.children && item.children.length > 0 && noButtonInChildren(item.children)) {
       // Recursion
       currentRouter.children = generator(item.children, currentRouter)
     }
     return currentRouter
   })
+}
+
+/**
+ * 编辑独立页面的路由
+ *
+ * @param routerMap
+ * @returns {*}
+ */
+export const generatorPages = (routerMap) => {
+  const buttons = []
+  routerMap.forEach(t => getButtons(t, buttons))
+  return buttons.map(item => {
+    const currentRouter = {
+      // 路由地址 动态拼接生成如 /dashboard/workplace
+      path: item.realPath,
+      // 路由名称，建议唯一
+      name: item.key || '',
+      // 该路由对应页面的 组件
+      component: constantRouterComponents[item.component || item.key],
+      // meta: 页面标题, 菜单图标, 页面权限(供指令权限用，可去掉)
+      meta: { title: item.name, icon: item.icon || undefined, permission: item.key && [ item.key ] || null, hiddenHeaderContent: true }
+    }
+    // 为了防止出现后端返回结果不规范，处理有可能出现拼接出两个 反斜杠
+    currentRouter.path = currentRouter.path.replace('//', '/')
+    return currentRouter
+  })
+}
+
+const getButtons = (item, buttons) => {
+  if (item.isMenu === 0) {
+    buttons.push(item)
+    return
+  }
+  if (item.children && item.children.length > 0) {
+    for (const i in item.children) {
+      getButtons(item.children[i], buttons)
+    }
+  }
+}
+
+const noButtonInChildren = (children) => {
+  const buttons = children.find(t => t.isMenu === 0)
+  return buttons === undefined || buttons.length === 0
 }
