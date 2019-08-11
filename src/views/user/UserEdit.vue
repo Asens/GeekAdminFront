@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新建菜单"
+    title="用户"
     :width="640"
     :visible="visible"
     :maskClosable="false"
@@ -19,74 +19,56 @@
           <a-input type="hidden" v-decorator="['id']" />
         </a-form-item>
         <a-form-item
-          label="菜单名称"
+          label="用户名"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input v-decorator="['name', {rules: [{required: true, message: '请输入菜单名称'}]}]" />
+          <a-input :disabled="usernameDisabled" v-decorator="['username',{rules: [{required: true, message: '请输入用户名'},{min: 2,max:20, message: '用户名最小长度2,最大长度20'},{pattern: /^[0-9a-zA-Z\u4E00-\u9FA5]+$/, message: '用户名包含不支持的字符'}] }]" />
         </a-form-item>
 
         <a-form-item
-          label="菜单编号"
+          label="密码"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-        >
-          <a-input :disabled="codeDisabled" v-decorator="['code', {rules: [{required: true, message: '请输入菜单编号'}]}]" />
+          :style="{display: usernameDisabled?'none':'block'}">
+          <a-input
+            :disabled="usernameDisabled"
+            v-decorator="[
+              'password',
+              { rules: [{ required: !usernameDisabled, message: '请输入密码' }] }
+            ]"
+            type="password"
+          />
         </a-form-item>
 
         <a-form-item
-          label="父菜单编号"
+          label="确认密码"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-        >
-          <a-input v-decorator="['parentCode',{initialValue:parentCode}]" />
+          :style="{display: usernameDisabled?'none':'block'}">
+          <a-input
+            v-decorator="[
+              'confirmPassword',
+              { rules: [{ required: !usernameDisabled, message: '请输入密码' },{validator: handleConfirmPassword }] }
+            ]"
+            type="password"
+          />
         </a-form-item>
 
         <a-form-item
-          label="功能类型"
+          label="昵称"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-radio-group v-decorator="['isMenu',{initialValue:'1'}]">
-            <a-radio value="1">
-              菜单
-            </a-radio>
-            <a-radio value="0">
-              功能按钮
-            </a-radio>
-          </a-radio-group>
+          <a-input v-decorator="['name',{rules: [{min: 2,max:20, message: '昵称最小长度2,最大长度20'},{pattern: /^[0-9a-zA-Z\u4E00-\u9FA5]+$/, message: '昵称包含不支持的字符'}] }]" />
         </a-form-item>
 
         <a-form-item
-          label="组件名称"
+          label="手机号"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input v-decorator="['component']" />
-        </a-form-item>
-
-        <a-form-item
-          label="页面地址"
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-        >
-          <a-input v-decorator="['realPath']" />
-        </a-form-item>
-
-        <a-form-item
-          label="图标"
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-        >
-          <a-input v-decorator="['icon']" />
-        </a-form-item>
-
-        <a-form-item
-          label="排序"
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-        >
-          <a-input v-decorator="['sortNum', {rules: [{required: true, message: '请输入排序'}],initialValue:'10'}]"/>
+          <a-input v-decorator="['phone',{rules: [{pattern:/^1[3456789]\d{9}$/, message: '请输入正确的手机号'}] }]" />
         </a-form-item>
 
         <a-form-item
@@ -110,10 +92,9 @@
 </template>
 
 <script>
-import { saveMenu, menuInfo } from '@/api/menu'
-
+import { saveUser, userEdit } from '@/api/user'
 export default {
-  name: 'MenuAdd',
+  name: 'UserEdit',
   data () {
     return {
       parentCode: '',
@@ -127,41 +108,47 @@ export default {
       },
       visible: false,
       confirmLoading: false,
-      codeDisabled: false,
+      usernameDisabled: false,
       form: this.$form.createForm(this)
     }
   },
   methods: {
     add (parentCode) {
       this.form.resetFields()
-      this.codeDisabled = false
+      this.usernameDisabled = false
       this.visible = true
       if (parentCode !== undefined) {
         this.parentCode = parentCode
       }
     },
-    edit (code) {
+    edit (id) {
       this.form.resetFields()
       this.confirmLoading = true
-      this.codeDisabled = true
+      this.usernameDisabled = true
       this.visible = true
-      menuInfo({ code: code }).then(res => {
-        const menu = res.result
-        console.log('menu :' + JSON.stringify(menu))
+      userEdit({ id: id }).then(res => {
+        const user = res.result
+        console.log('user :' + JSON.stringify(user))
         this.form.setFieldsValue({
-          name: menu.name,
-          id: menu.id,
-          code: menu.code,
-          parentCode: menu.parentCode,
-          component: menu.component,
-          icon: menu.icon,
-          sortNum: menu.sortNum,
-          realPath: menu.realPath,
-          status: menu.status.toString(),
-          isMenu: menu.isMenu.toString()
+          name: user.name,
+          id: user.id,
+          username: user.username,
+          phone: user.phone,
+          status: user.status.toString()
         })
         this.confirmLoading = false
+      }).catch(error => {
+        this.confirmLoading = false
+        console.log('error :' + JSON.stringify(error))
       })
+    },
+    handleConfirmPassword (rule, value, callback) {
+      console.log('handleConfirmPassword')
+      const { getFieldValue } = this.form
+      if (value && value !== getFieldValue('password')) {
+        callback('两次输入不一致')
+      }
+      callback()
     },
     handleSubmit () {
       const { form: { validateFields } } = this
@@ -169,7 +156,8 @@ export default {
       validateFields((errors, values) => {
         if (!errors) {
           console.log('values', values)
-          saveMenu(values).then(res => {
+          this.$emit('ok', values)
+          saveUser(values).then(res => {
             this.confirmLoading = false
             if (res.status === 'success') {
               this.visible = false
@@ -182,6 +170,8 @@ export default {
                 description: res.message
               })
             }
+          }).catch(error => {
+            this.confirmLoading = false
           })
         } else {
           this.confirmLoading = false

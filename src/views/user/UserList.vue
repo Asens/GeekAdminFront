@@ -96,7 +96,7 @@
         showPagination="auto"
       >
         <span slot="username" slot-scope="text, record">
-          <img :src="record.avatar" class="avatar"/> {{ record.username }}
+          <img v-if="record.avatar!==null" :src="record.avatar" class="avatar"/> {{ record.username }}
         </span>
         <span slot="status" slot-scope="text">
           <a-badge :status="text | statusTypeFilter" :text="text | statusFilter"/>
@@ -104,25 +104,39 @@
         <span slot="description" slot-scope="text, record">
           <ellipsis :length="4" tooltip>{{ record.username }}</ellipsis>
         </span>
-
+        <span slot="createDate" slot-scope="text">
+          <span>{{ text | dateFilter }}</span>
+        </span>
         <span slot="action" slot-scope="text, record">
           <template>
-            <a @click="handleEdit(record)">配置</a>
+            <a @click="authUser(record.id)">授权</a>
             <a-divider type="vertical"/>
-            <a @click="handleSub(record)">订阅报警</a>
+            <a @click="editUser(record.id)">编辑</a>
+            <a-divider type="vertical"/>
+            <a-dropdown>
+              <a class="ant-dropdown-link" href="#">
+                更多 <a-icon type="down" />
+              </a>
+              <a-menu slot="overlay">
+                <a-menu-item>
+                  <a href="javascript:;" @click="deleteUser(record.id)">删除</a>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
           </template>
         </span>
       </s-table>
     <!--<create-form ref="createModal" @ok="handleOk"/>-->
     <!--<step-by-step-modal ref="modal" @ok="handleOk"/>-->
+      <user-edit ref="createModal" @ok="handleOk"></user-edit>
     </a-card>
   </div>
 </template>
 
 <script>
-import moment from 'moment'
 import { STable, Ellipsis } from '@/components'
 import { getUserList } from '@/api/user'
+import UserEdit from './UserEdit'
 
 const statusMap = {
   0: {
@@ -138,6 +152,7 @@ const statusMap = {
 export default {
   name: 'TableList',
   components: {
+    UserEdit,
     STable,
     Ellipsis
   },
@@ -160,6 +175,10 @@ export default {
           scopedSlots: { customRender: 'username' }
         },
         {
+          title: '昵称',
+          dataIndex: 'name'
+        },
+        {
           title: '状态',
           dataIndex: 'status',
           scopedSlots: { customRender: 'status' }
@@ -167,12 +186,13 @@ export default {
         {
           title: '注册时间',
           dataIndex: 'createDate',
-          sorter: true
+          sorter: true,
+          scopedSlots: { customRender: 'createDate' }
         },
         {
           title: '操作',
           dataIndex: 'action',
-          width: '150px',
+          width: '190px',
           scopedSlots: { customRender: 'action' }
         }
       ],
@@ -208,24 +228,26 @@ export default {
     },
     statusTypeFilter (type) {
       return statusMap[type].status
+    },
+    dateFilter (value) {
+      const date = new Date(value)
+      const y = date.getFullYear()
+      let MM = date.getMonth() + 1
+      MM = MM < 10 ? ('0' + MM) : MM
+      let d = date.getDate()
+      d = d < 10 ? ('0' + d) : d
+      let h = date.getHours()
+      h = h < 10 ? ('0' + h) : h
+      let m = date.getMinutes()
+      m = m < 10 ? ('0' + m) : m
+      return y + '-' + MM + '-' + d + ' ' + h + ':' + m
     }
   },
-  created () {
-  },
   methods: {
-    handleEdit (record) {
-      console.log(record)
-      this.$refs.modal.edit(record)
-    },
-    handleSub (record) {
-      if (record.status !== 0) {
-        this.$message.info(`${record.no} 订阅成功`)
-      } else {
-        this.$message.error(`${record.no} 订阅失败，规则已关闭`)
-      }
-    },
     handleOk () {
-      this.$refs.table.refresh()
+    },
+    editUser (id) {
+      this.$refs.createModal.edit(id)
     },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -233,11 +255,6 @@ export default {
     },
     toggleAdvanced () {
       this.advanced = !this.advanced
-    },
-    resetSearchForm () {
-      this.queryParam = {
-        date: moment(new Date())
-      }
     }
   }
 }

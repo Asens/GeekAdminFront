@@ -26,6 +26,10 @@
               <a-input v-decorator="[ 'name', {rules: [{ required: true, message: 'Please input role name!' }]} ]" placeholder="请填写角色名称" />
             </a-form-item>
 
+            <a-form-item label="角色编码">
+              <a-input v-decorator="[ 'code', {rules: [{ required: true, message: 'Please input role name!' }]} ]" />
+            </a-form-item>
+
             <a-form-item label="状态">
               <a-select v-decorator="[ 'status', {rules: []} ]">
                 <a-select-option :value="1">正常</a-select-option>
@@ -175,7 +179,7 @@ export default {
       }
 
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.mdl, 'id', 'name', 'status', 'describe'))
+        this.form.setFieldsValue(pick(this.mdl, 'id', 'name', 'status', 'describe', 'code'))
       })
     },
 

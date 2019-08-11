@@ -2,7 +2,7 @@ import { axios } from '@/utils/request'
 
 const api = {
   menuTree: '/api/sys/permission/menuTree',
-  menus: '/api/sys/user/menus',
+  menus: '/api/sys/auth/menus',
   menuInfo: '/api/sys/permission/info',
   deleteMenu: '/api/sys/permission/delete',
   saveMenu: '/api/sys/permission/save'

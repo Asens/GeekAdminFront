@@ -1,5 +1,5 @@
 const api = {
-  Login: '/api/sys/user/login',
+  Login: '/api/sys/auth/login',
   Logout: '/auth/logout',
   ForgePassword: '/auth/forge-password',
   Register: '/auth/register',
@@ -7,6 +7,6 @@ const api = {
   SendSms: '/account/sms',
   SendSmsErr: '/account/sms_err',
   // get my info
-  UserInfo: '/api/sys/user/info'
+  UserInfo: '/api/sys/auth/info'
 }
 export default api

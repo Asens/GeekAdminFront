@@ -34,6 +34,26 @@ const err = (error) => {
       }
     }
   }
+  if (error.response.status === 500) {
+    notification.error({
+      message: '请求失败',
+      description: '服务器内部错误'
+    })
+  }
+
+  if (error.response.status === 404) {
+    notification.error({
+      message: '请求失败',
+      description: '404 not found'
+    })
+  }
+
+  if (error.response.status === 400) {
+    notification.error({
+      message: '请求失败',
+      description: '参数错误'
+    })
+  }
   return Promise.reject(error)
 }
 
