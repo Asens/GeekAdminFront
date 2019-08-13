@@ -4,8 +4,8 @@
       <div class="top">
         <div class="header">
           <a href="/">
-            <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">Ant Design</span>
+            <img src="~@/assets/geek.jpg" class="logo" alt="logo">
+            <span class="title">Geek Admin</span>
           </a>
         </div>
         <div class="desc">

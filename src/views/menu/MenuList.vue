@@ -1,9 +1,9 @@
 <template>
   <a-card :bordered="false">
     <div class="table-operator" style="text-align: right">
-      <a-button type="primary" icon="plus" @click="$refs.createModal.add()">新建</a-button>
+      <a-button v-if="$auth('system.menu.save')" type="primary" icon="plus" @click="$refs.createModal.add()">新建</a-button>
     </div>
-    <a-table :columns="columns" :dataSource="data">
+    <a-table v-if="$auth('system.menu.list')" :columns="columns" :dataSource="data">
       <span slot="status" slot-scope="text">
         <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
       </span>
@@ -15,17 +15,16 @@
         <a-icon :type="text" />
       </span>
       <span slot="action" slot-scope="text,record">
-        <a @click="$refs.createModal.add(record.code)">添加子级</a>
-        <a-divider type="vertical" />
-        <a @click="$refs.createModal.edit(record.code)">编辑</a>
+        <a v-if="$auth('system.menu.save')" @click="$refs.createModal.add(record.code)">添加子级</a>
+        <a v-if="$auth('system.menu.edit')" @click="$refs.createModal.edit(record.code)"><a-divider type="vertical" /> 编辑</a>
         <!--<a @click="open('/system/menu/edit/'+record.id)">编辑</a>-->
-        <a-divider type="vertical" />
-        <a>
+        <a v-if="$auth('system.menu.delete')">
+          <a-divider type="vertical" />
           <a-popconfirm title="删除该菜单将同时删除其子菜单,确认删除?" @confirm="deleteMenu(record.id)" okText="是" cancelText="否" >删除</a-popconfirm>
         </a>
       </span>
     </a-table>
-
+    <div v-else>无列表数据权限</div>
     <menu-add ref="createModal" @ok="handleOk" />
   </a-card>
 </template>
