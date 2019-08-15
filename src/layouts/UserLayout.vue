@@ -4,7 +4,7 @@
       <div class="top">
         <div class="header">
           <a href="/">
-            <img src="~@/assets/geek.jpg" class="logo" alt="logo">
+            <img src="~@/assets/geek.png" class="logo" alt="logo">
             <span class="title">Geek Admin</span>
           </a>
         </div>

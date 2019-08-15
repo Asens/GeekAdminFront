@@ -126,9 +126,8 @@
           </template>
         </span>
       </s-table>
-    <!--<create-form ref="createModal" @ok="handleOk"/>-->
-    <!--<step-by-step-modal ref="modal" @ok="handleOk"/>-->
-      <user-edit ref="createModal" @ok="handleOk"></user-edit>
+      <user-edit ref="createModal"></user-edit>
+      <user-auth ref="userAuth"></user-auth>
     </a-card>
   </div>
 </template>
@@ -137,6 +136,7 @@
 import { STable, Ellipsis } from '@/components'
 import { getUserList } from '@/api/user'
 import UserEdit from './UserEdit'
+import UserAuth from './UserAuth'
 
 const statusMap = {
   0: {
@@ -152,6 +152,7 @@ const statusMap = {
 export default {
   name: 'TableList',
   components: {
+    UserAuth,
     UserEdit,
     STable,
     Ellipsis
@@ -244,10 +245,11 @@ export default {
     }
   },
   methods: {
-    handleOk () {
-    },
     editUser (id) {
       this.$refs.createModal.edit(id)
+    },
+    authUser (id) {
+      this.$refs.userAuth.edit(id)
     },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
