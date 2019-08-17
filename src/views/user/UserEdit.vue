@@ -97,6 +97,7 @@ export default {
   name: 'UserEdit',
   data () {
     return {
+      form: this.$form.createForm(this),
       parentCode: '',
       labelCol: {
         xs: { span: 24 },
@@ -109,7 +110,6 @@ export default {
       visible: false,
       confirmLoading: false,
       usernameDisabled: false,
-      form: this.$form.createForm(this)
     }
   },
   methods: {

@@ -3,45 +3,23 @@
     <a-row :gutter="16">
       <a-col :md="24" :lg="16">
 
-        <a-form layout="vertical">
+        <a-form :form="form" layout="vertical">
+          <a-form-item
+            label="用户名"
+          >
+            <p style="margin-top: 5px;font-size: 1.1rem">{{user.username}}</p>
+          </a-form-item>
           <a-form-item
             label="昵称"
           >
-            <a-input placeholder="给自己起个名字" />
-          </a-form-item>
-          <a-form-item
-            label="Bio"
-          >
-            <a-textarea rows="4" placeholder="You are not alone."/>
+            <a-input placeholder="给自己起个名字"  v-decorator="['name']"/>
           </a-form-item>
 
           <a-form-item
-            label="电子邮件"
+            label="手机号"
             :required="false"
           >
-            <a-input placeholder="exp@admin.com"/>
-          </a-form-item>
-          <a-form-item
-            label="加密方式"
-            :required="false"
-          >
-            <a-select defaultValue="aes-256-cfb">
-              <a-select-option value="aes-256-cfb">aes-256-cfb</a-select-option>
-              <a-select-option value="aes-128-cfb">aes-128-cfb</a-select-option>
-              <a-select-option value="chacha20">chacha20</a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item
-            label="连接密码"
-            :required="false"
-          >
-            <a-input placeholder="h3gSbecd"/>
-          </a-form-item>
-          <a-form-item
-            label="登录密码"
-            :required="false"
-          >
-            <a-input placeholder="密码"/>
+            <a-input v-decorator="['phone']" />
           </a-form-item>
 
           <a-form-item>
@@ -52,7 +30,7 @@
 
       </a-col>
       <a-col :md="24" :lg="8" :style="{ minHeight: '180px' }">
-        <div class="ant-upload-preview" @click="$refs.modal.edit(1)" >
+        <div class="ant-upload-preview" @click="$refs.modal.edit(option.img)" >
           <a-icon type="cloud-upload-o" class="upload-icon"/>
           <div class="mask">
             <a-icon type="plus" />
@@ -71,6 +49,7 @@
 
 <script>
 import AvatarModal from './AvatarModal'
+import { centerInfo } from '@/api/user'
 
 export default {
   components: {
@@ -80,6 +59,8 @@ export default {
     return {
       // cropper
       preview: {},
+      form: this.$form.createForm(this),
+      user: {},
       option: {
         img: '/avatar2.jpg',
         info: true,
@@ -93,12 +74,27 @@ export default {
         fixedBox: true,
         // 开启宽度和高度比例
         fixed: true,
-        fixedNumber: [1, 1]
+        fixedNumber: [1, 1],
+        form: this.$form.createForm(this)
       }
     }
   },
   methods: {
 
+  },
+  mounted () {
+    centerInfo().then(res => {
+      if (res.status === 'success') {
+        const user = res.result
+        this.option.img = user.avatar
+        this.user = user
+        console.log('user :' + JSON.stringify(user))
+        this.form.setFieldsValue({
+          name: user.name,
+          phone: user.phone
+        })
+      }
+    })
   }
 }
 </script>

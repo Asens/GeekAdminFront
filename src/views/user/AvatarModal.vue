@@ -49,7 +49,7 @@ export default {
       confirmLoading: false,
 
       options: {
-        img: '/avatar2.jpg',
+        img: '',
         autoCrop: true,
         autoCropWidth: 200,
         autoCropHeight: 200,
@@ -59,9 +59,9 @@ export default {
     }
   },
   methods: {
-    edit (id) {
+    edit (img) {
       this.visible = true
-      this.id = id
+      this.options.img = img
       /* 获取原始头像 */
     },
     close () {

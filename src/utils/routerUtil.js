@@ -27,6 +27,45 @@ const notFoundRouter = {
   path: '*', redirect: '/404', hidden: true
 }
 
+const centerRouter = {
+  path: '/',
+  name: 'index',
+  component: BasicLayout,
+  meta: { title: '首页' },
+  redirect: '/dashboard/workplace',
+  children: [{
+    path: '/account',
+    component: RouteView,
+    redirect: '/account/center',
+    name: 'account',
+    meta: { title: '个人页', icon: 'user', keepAlive: true, permission: [ 'user' ] },
+    children: [
+      {
+        path: '/account/settings',
+        name: 'settings',
+        component: () => import('@/views/user/Settings'),
+        meta: { title: '个人设置', hideHeader: true, permission: [ 'user' ] },
+        redirect: '/account/settings/base',
+        hideChildrenInMenu: true,
+        children: [
+          {
+            path: '/account/settings/base',
+            name: 'BaseSettings',
+            component: () => import('@/views/user/BaseSetting'),
+            meta: { title: '基本设置', hidden: true, permission: [ 'user' ] }
+          },
+          {
+            path: '/account/settings/security',
+            name: 'SecuritySettings',
+            component: () => import('@/views/user/Security'),
+            meta: { title: '安全设置', hidden: true, keepAlive: true, permission: [ 'user' ] }
+          }
+        ]
+      }
+    ]
+  }]
+}
+
 /**
  * 获取路由菜单信息
  *
@@ -58,6 +97,7 @@ export const generatorDynamicRouter = () => {
       }
       routers.push(pageRouter)
       routers.push(notFoundRouter)
+      routers.push(centerRouter)
       resolve(routers)
     }).catch(err => {
       reject(err)
