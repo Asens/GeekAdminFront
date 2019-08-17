@@ -2,21 +2,21 @@
   <div class="footer">
     <div class="links">
       <a
-        href="https://pro.loacg.com/"
+        href="https://www.geekutil.com/"
         target="_blank"
-      >Pro 首页</a>
+      >文档</a>
       <a
-        href="https://github.com/sendya/ant-design-pro-vue"
+        href="https://github.com/Asens/GeekAdmin"
         target="_blank"
       >
         <a-icon type="github" />
       </a>
-      <a href="https://ant.design/">Geek Admin</a>
-      <a href="https://vue.ant.design/">Vue Antd</a>
+      <a href="https://github.com/Asens/GeekAdmin">Geek Admin</a>
+      <a href="https://github.com/Asens/GeekAdminFront">Geek Admin Front</a>
     </div>
     <div class="copyright">
       Copyright
-      <a-icon type="copyright" /> 2018 <span>白鹭学园技术组出品</span>
+      <a-icon type="copyright" /> 2019 <span>Geek Admin</span>
     </div>
   </div>
 </template>
