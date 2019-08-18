@@ -58,7 +58,7 @@ const centerRouter = {
             path: '/account/settings/security',
             name: 'SecuritySettings',
             component: () => import('@/views/user/Security'),
-            meta: { title: '安全设置', hidden: true, keepAlive: true, permission: [ 'user' ] }
+            meta: { title: '修改密码', hidden: true, keepAlive: true, permission: [ 'user' ] }
           }
         ]
       }

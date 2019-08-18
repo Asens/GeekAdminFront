@@ -23,19 +23,20 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input :disabled="usernameDisabled" v-decorator="['username',{rules: [{required: true, message: '请输入用户名'},{min: 2,max:20, message: '用户名最小长度2,最大长度20'},{pattern: /^[0-9a-zA-Z\u4E00-\u9FA5]+$/, message: '用户名包含不支持的字符'}] }]" />
+          <a-input v-if="!isUpdate" v-decorator="['username',{rules: [{required: true, message: '请输入用户名'},{min: 2,max:20, message: '用户名最小长度2,最大长度20'},{pattern: /^[0-9a-zA-Z\u4E00-\u9FA5]+$/, message: '用户名包含不支持的字符'}] }]" />
+          <span v-else>{{username}}</span>
         </a-form-item>
 
         <a-form-item
           label="密码"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          :style="{display: usernameDisabled?'none':'block'}">
+          :style="{display: isUpdate?'none':'block'}">
           <a-input
-            :disabled="usernameDisabled"
+            :disabled="isUpdate"
             v-decorator="[
               'password',
-              { rules: [{ required: !usernameDisabled, message: '请输入密码' }] }
+              { rules: [{ required: !isUpdate, message: '请输入密码' }] }
             ]"
             type="password"
           />
@@ -45,11 +46,11 @@
           label="确认密码"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          :style="{display: usernameDisabled?'none':'block'}">
+          :style="{display: isUpdate?'none':'block'}">
           <a-input
             v-decorator="[
               'confirmPassword',
-              { rules: [{ required: !usernameDisabled, message: '请输入密码' },{validator: handleConfirmPassword }] }
+              { rules: [{ required: !isUpdate, message: '请输入密码' },{validator: handleConfirmPassword }] }
             ]"
             type="password"
           />
@@ -98,6 +99,7 @@ export default {
   data () {
     return {
       form: this.$form.createForm(this),
+      username: '',
       parentCode: '',
       labelCol: {
         xs: { span: 24 },
@@ -109,13 +111,13 @@ export default {
       },
       visible: false,
       confirmLoading: false,
-      usernameDisabled: false,
+      isUpdate: false
     }
   },
   methods: {
     add (parentCode) {
       this.form.resetFields()
-      this.usernameDisabled = false
+      this.isUpdate = false
       this.visible = true
       if (parentCode !== undefined) {
         this.parentCode = parentCode
@@ -124,15 +126,15 @@ export default {
     edit (id) {
       this.form.resetFields()
       this.confirmLoading = true
-      this.usernameDisabled = true
+      this.isUpdate = true
       this.visible = true
       userEdit({ id: id }).then(res => {
         const user = res.result
         console.log('user :' + JSON.stringify(user))
+        this.username = user.username
         this.form.setFieldsValue({
           name: user.name,
           id: user.id,
-          username: user.username,
           phone: user.phone,
           status: user.status.toString()
         })

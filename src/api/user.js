@@ -6,7 +6,9 @@ const api = {
   saveUser: '/api/sys/user/save',
   authUser: '/api/sys/user/auth',
   doAuthUser: '/api/sys/user/doAuth',
-  centerInfo: '/api/sys/center/info'
+  centerInfo: '/api/sys/center/info',
+  changePassword: '/api/sys/user/changePassword',
+  checkPassword: '/api/sys/user/checkPassword'
 }
 
 export default api
@@ -54,6 +56,22 @@ export function doAuthUser (parameter) {
 export function centerInfo (parameter) {
   return axios({
     url: api.centerInfo,
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function changePassword (parameter) {
+  return axios({
+    url: api.changePassword,
+    method: 'post',
+    params: parameter
+  })
+}
+
+export function checkPassword (parameter) {
+  return axios({
+    url: api.checkPassword,
     method: 'get',
     params: parameter
   })
