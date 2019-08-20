@@ -18,7 +18,8 @@ const constantRouterComponents = {
   MenuAdd: () => import('@/views/form/BasicForm'),
   MenuList: () => import('@/views/menu/MenuList'),
   RoleList: () => import('@/views/role/RoleList'),
-  UserList: () => import('@/views/user/UserList')
+  UserList: () => import('@/views/user/UserList'),
+  Schedule: () => import('@/views/schedule/Schedule')
   // ...more
 }
 
@@ -77,8 +78,8 @@ const centerRouter = {
 export const generatorDynamicRouter = () => {
   return new Promise((resolve, reject) => {
     menus().then(res => {
-      const result = res.result
-      console.log('router result :' + JSON.stringify(res.result))
+      const result = res.data
+      console.log('router result :' + JSON.stringify(res.data))
       const routers = generator(result)
       console.log('buttons :' + JSON.stringify(generatorPages(result)))
 

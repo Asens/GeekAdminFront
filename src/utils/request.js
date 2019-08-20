@@ -20,7 +20,7 @@ const err = (error) => {
         description: data.message
       })
     }
-    if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
+    if (error.response.status === 401 && !(data.data && data.data.isLogin)) {
       notification.error({
         message: '没有权限',
         description: '验证失败'

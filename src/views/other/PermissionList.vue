@@ -195,7 +195,7 @@ export default {
         return this.$http.get('/permission', {
           params: Object.assign(parameter, this.queryParam)
         }).then(res => {
-          const result = res.result
+          const result = res.data
           result.data.map(permission => {
             permission.actionList = JSON.parse(permission.actionData)
             return permission

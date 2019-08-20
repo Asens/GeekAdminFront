@@ -146,7 +146,7 @@ export default {
       this.codeDisabled = true
       this.visible = true
       menuInfo({ code: code }).then(res => {
-        const menu = res.result
+        const menu = res.data
         console.log('menu :' + JSON.stringify(menu))
         this.form.setFieldsValue({
           name: menu.name,

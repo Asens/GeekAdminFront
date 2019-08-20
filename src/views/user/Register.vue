@@ -243,7 +243,7 @@ export default {
               setTimeout(hide, 2500)
               $notification['success']({
                 message: '提示',
-                description: '验证码获取成功，您的验证码为：' + res.result.captcha,
+                description: '验证码获取成功，您的验证码为：' + res.data.captcha,
                 duration: 8
               })
             }).catch(err => {

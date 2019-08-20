@@ -58,12 +58,12 @@ export default {
       this.usernameDisabled = true
       this.visible = true
       authUser({ id: id }).then(res => {
-        const user = res.result
+        const user = res.data
         console.log('user :' + JSON.stringify(user))
-        this.roles = res.result.map(t => {
+        this.roles = res.data.map(t => {
           return { label: t.name, value: t.id }
         })
-        this.hasAuth = res.result.filter(t => t.checked).map(t => t.id)
+        this.hasAuth = res.data.filter(t => t.checked).map(t => t.id)
         console.log('roles :' + JSON.stringify(this.roles))
         console.log('hasAuth :' + JSON.stringify(this.hasAuth))
         this.confirmLoading = false

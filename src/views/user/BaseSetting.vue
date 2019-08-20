@@ -119,9 +119,9 @@ export default {
         return
       }
       if (info.file.status === 'done') {
-        this.user.avatar = info.file.response.result
+        this.user.avatar = info.file.response.data
         this.form.setFieldsValue({
-          avatar: info.file.response.result
+          avatar: info.file.response.data
         })
         this.loading = false
       }
@@ -141,7 +141,7 @@ export default {
   mounted () {
     centerInfo().then(res => {
       if (res.status === 'success') {
-        const user = res.result
+        const user = res.data
         this.option.img = user.avatar
         this.user = user
         console.log('user :' + JSON.stringify(user))

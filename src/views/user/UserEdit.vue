@@ -129,7 +129,7 @@ export default {
       this.isUpdate = true
       this.visible = true
       userEdit({ id: id }).then(res => {
-        const user = res.result
+        const user = res.data
         console.log('user :' + JSON.stringify(user))
         this.username = user.username
         this.form.setFieldsValue({

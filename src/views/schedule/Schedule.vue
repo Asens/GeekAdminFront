@@ -134,9 +134,7 @@
 
 <script>
 import { STable, Ellipsis } from '@/components'
-import { getUserList } from '@/api/user'
-import UserEdit from './UserEdit'
-import UserAuth from './UserAuth'
+import { getUserList } from '@/api/schedule'
 
 const statusMap = {
   0: {
@@ -150,10 +148,8 @@ const statusMap = {
 }
 
 export default {
-  name: 'UserList',
+  name: 'Schedule',
   components: {
-    UserAuth,
-    UserEdit,
     STable,
     Ellipsis
   },

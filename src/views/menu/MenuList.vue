@@ -57,7 +57,7 @@ export default {
   },
   created () {
     getMenuTree().then(res => {
-      this.data = res.result
+      this.data = res.data
     })
   },
   filters: {
@@ -80,13 +80,13 @@ export default {
     },
     handleOk () {
       getMenuTree().then(res => {
-        this.data = res.result
+        this.data = res.data
       })
     },
     deleteMenu (id) {
       deleteMenu({ id: id }).then(res => {
         getMenuTree().then(res => {
-          this.data = res.result
+          this.data = res.data
         })
         this.$message.success('删除成功')
       })
