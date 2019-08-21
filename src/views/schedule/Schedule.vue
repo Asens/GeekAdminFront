@@ -95,23 +95,17 @@
         :rowSelection="options.rowSelection"
         showPagination="auto"
       >
-        <span slot="username" slot-scope="text, record">
-          <img v-if="record.avatar!==null" :src="record.avatar" class="avatar"/> {{ record.username }}
-        </span>
         <span slot="status" slot-scope="text">
           <a-badge :status="text | statusTypeFilter" :text="text | statusFilter"/>
-        </span>
-        <span slot="description" slot-scope="text, record">
-          <ellipsis :length="4" tooltip>{{ record.username }}</ellipsis>
         </span>
         <span slot="createDate" slot-scope="text">
           <span>{{ text | dateFilter }}</span>
         </span>
         <span slot="action" slot-scope="text, record">
           <template>
-            <a @click="authUser(record.id)">授权</a>
+            <a @click="run(record.id)">立即执行</a>
             <a-divider type="vertical"/>
-            <a @click="editUser(record.id)">编辑</a>
+            <a @click="edit(record.id)">编辑</a>
             <a-divider type="vertical"/>
             <a-dropdown>
               <a class="ant-dropdown-link" href="#">
@@ -119,31 +113,35 @@
               </a>
               <a-menu slot="overlay">
                 <a-menu-item>
-                  <a href="javascript:;" @click="deleteUser(record.id)">删除</a>
+                  <a href="javascript:;" @click="pause(record.id)">禁用</a>
+                </a-menu-item>
+                <a-menu-item>
+                  <a href="javascript:;" @click="resume(record.id)">启用</a>
+                </a-menu-item>
+                <a-menu-item>
+                  <a href="javascript:;" @click="delete(record.id)">删除</a>
                 </a-menu-item>
               </a-menu>
             </a-dropdown>
           </template>
         </span>
       </s-table>
-      <user-edit ref="createModal"></user-edit>
-      <user-auth ref="userAuth"></user-auth>
     </a-card>
   </div>
 </template>
 
 <script>
 import { STable, Ellipsis } from '@/components'
-import { getUserList } from '@/api/schedule'
+import { getScheduleJobList, deleteScheduleJob, runScheduleJob, pauseScheduleJob, resumeScheduleJob } from '@/api/schedule'
 
 const statusMap = {
   0: {
     status: 'error',
-    text: '异常'
+    text: '禁用'
   },
   1: {
     status: 'processing',
-    text: '正常'
+    text: '启用'
   }
 }
 
@@ -167,13 +165,16 @@ export default {
           dataIndex: 'id'
         },
         {
-          title: '用户名',
-          dataIndex: 'username',
-          scopedSlots: { customRender: 'username' }
+          title: '任务',
+          dataIndex: 'remark'
         },
         {
-          title: '昵称',
-          dataIndex: 'name'
+          title: 'bean名称',
+          dataIndex: 'beanName'
+        },
+        {
+          title: '方法名称',
+          dataIndex: 'methodName'
         },
         {
           title: '状态',
@@ -181,23 +182,18 @@ export default {
           scopedSlots: { customRender: 'status' }
         },
         {
-          title: '注册时间',
-          dataIndex: 'createDate',
-          sorter: true,
-          scopedSlots: { customRender: 'createDate' }
-        },
-        {
           title: '操作',
           dataIndex: 'action',
-          width: '190px',
+          width: '220px',
           scopedSlots: { customRender: 'action' }
         }
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
         console.log('loadData.parameter', parameter)
-        return getUserList(Object.assign(parameter, this.queryParam))
+        return getScheduleJobList(Object.assign(parameter, this.queryParam))
           .then(res => {
+            console.log(JSON.stringify(res.data))
             return res.data
           })
       },
@@ -241,11 +237,29 @@ export default {
     }
   },
   methods: {
-    editUser (id) {
-      this.$refs.createModal.edit(id)
+    edit (id) {
+      this.$refs.edit.edit(id)
     },
-    authUser (id) {
-      this.$refs.userAuth.edit(id)
+    run (id) {
+      runScheduleJob({ id: id }).then(res => {
+        if (res.status === 'success') {
+          this.$message.success('任务已提交执行')
+        }
+      })
+    },
+    pause (id) {
+      pauseScheduleJob({ id: id }).then(res => {
+        if (res.status === 'success') {
+          this.$message.success('任务已禁用')
+        }
+      })
+    },
+    resume (id) {
+      resumeScheduleJob({ id: id }).then(res => {
+        if (res.status === 'success') {
+          this.$message.success('任务已启用')
+        }
+      })
     },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
