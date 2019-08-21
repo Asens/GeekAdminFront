@@ -1,26 +1,20 @@
-
-// eslint-disable-next-line
-import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
+import { BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
 import { menus } from '@/api/menu'
 
 // 前端路由表
 const constantRouterComponents = {
-  // 基础页面 layout 必须引入
+  // 基础页面 layout
   BasicLayout: BasicLayout,
   BlankLayout: BlankLayout,
   RouteView: RouteView,
   PageView: PageView,
 
-  // 你需要动态引入的页面组件
-  analysis: () => import('@/views/dashboard/Analysis'),
+  // 动态引入的页面组件
   workplace: () => import('@/views/dashboard/Workplace'),
-  monitor: () => import('@/views/dashboard/Monitor'),
-  MenuAdd: () => import('@/views/form/BasicForm'),
   MenuList: () => import('@/views/menu/MenuList'),
   RoleList: () => import('@/views/role/RoleList'),
   UserList: () => import('@/views/user/UserList'),
   Schedule: () => import('@/views/schedule/Schedule')
-  // ...more
 }
 
 // 前端未找到页面路由（固定不用改）
