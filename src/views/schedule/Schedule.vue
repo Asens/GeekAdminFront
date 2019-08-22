@@ -66,7 +66,7 @@
     </a-card>
     <a-card :bordered="false">
       <div class="table-operator" style="text-align: right">
-        <a-button type="primary" icon="plus" @click="$refs.createModal.add()">新建</a-button>
+        <a-button type="primary" icon="plus" @click="$refs.scheduleEdit.add()">新建</a-button>
         <a-dropdown v-action:edit v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay">
             <a-menu-item key="1">
@@ -127,12 +127,14 @@
         </span>
       </s-table>
     </a-card>
+    <schedule-edit ref="scheduleEdit" @ok="refreshData"/>
   </div>
 </template>
 
 <script>
 import { STable, Ellipsis } from '@/components'
 import { getScheduleJobList, deleteScheduleJob, runScheduleJob, pauseScheduleJob, resumeScheduleJob } from '@/api/schedule'
+import ScheduleEdit from './ScheduleEdit'
 
 const statusMap = {
   0: {
@@ -148,6 +150,7 @@ const statusMap = {
 export default {
   name: 'Schedule',
   components: {
+    ScheduleEdit,
     STable,
     Ellipsis
   },
@@ -237,6 +240,9 @@ export default {
     }
   },
   methods: {
+    refreshData () {
+      this.$refs.table.refresh()
+    },
     edit (id) {
       this.$refs.edit.edit(id)
     },
