@@ -23,8 +23,14 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input v-if="!isUpdate" v-decorator="['username',{rules: [{required: true, message: '请输入用户名'},{min: 2,max:20, message: '用户名最小长度2,最大长度20'},{pattern: /^[0-9a-zA-Z\u4E00-\u9FA5]+$/, message: '用户名包含不支持的字符'}] }]" />
-          <span v-else>{{username}}</span>
+          <a-input
+            v-if="!isUpdate"
+            v-decorator="['username',{rules: [
+              {required: true, message: '请输入用户名'},
+              {min: 2,max:20, message: '用户名最小长度2,最大长度20'},
+              {pattern: /^[0-9a-zA-Z\u4E00-\u9FA5]+$/, message: '用户名包含不支持的字符'}
+            ] }]" />
+          <span v-else>{{ username }}</span>
         </a-form-item>
 
         <a-form-item

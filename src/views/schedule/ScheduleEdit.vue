@@ -23,7 +23,12 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input v-decorator="['beanName', {rules: [{required: true, message: '请输入bean名称'}]}]" />
+          <a-input
+            v-decorator="['beanName',{rules: [
+              {required: true, message: '请输入bean名称'},
+              {min: 2,max:20, message: 'bean名称最小长度2,最大长度20'},
+              {pattern: /^[0-9a-zA-Z]+$/, message: 'bean名称包含不支持的字符'}
+            ]}]" />
         </a-form-item>
 
         <a-form-item
@@ -31,7 +36,12 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input v-decorator="['methodName', {rules: [{required: true, message: '请输入方法名称'}]}]" />
+          <a-input
+            v-decorator="['methodName', {rules: [
+              {required: true, message: '请输入方法名称'},
+              {min: 2,max:20, message: 'bean名称最小长度2,最大长度20'},
+              {pattern: /^[0-9a-zA-Z]+$/, message: '方法名称包含不支持的字符'}
+            ]}]" />
         </a-form-item>
 
         <a-form-item
@@ -39,7 +49,12 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input v-decorator="['remark', {rules: [{required: true, message: '请输入描述'}]}]" />
+          <a-input
+            v-decorator="['remark', {rules: [
+              {required: true, message: '请输入描述'},
+              {min: 2,max:20, message: 'bean名称最小长度2,最大长度20'},
+              {pattern: /^[0-9a-zA-Z\u4E00-\u9FA5]+$/, message: 'bean名称包含不支持的字符'}
+            ]}]" />
         </a-form-item>
 
         <a-form-item
@@ -47,7 +62,10 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input v-decorator="['params']" />
+          <a-input
+            v-decorator="['params', {rules: [
+              {max:50, message: '参数最大长度50'}
+            ]}]" />
         </a-form-item>
 
         <a-form-item
@@ -55,7 +73,11 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-input v-decorator="['cronExpression', {rules: [{required: true, message: '请输入cron表达式'}]}]" />
+          <a-input
+            v-decorator="['cronExpression', {rules: [
+              {required: true, message: '请输入cron表达式'},
+              {max:15, message: '请输入正确的cron表达式'}
+            ]}]" />
         </a-form-item>
 
         <a-form-item
@@ -100,29 +122,31 @@ export default {
     }
   },
   methods: {
-    add (parentCode) {
+    add () {
       this.form.resetFields()
       this.visible = true
     },
-    edit (code) {
+    edit (id) {
       this.form.resetFields()
       this.confirmLoading = true
       this.visible = true
-      editScheduleJob({ code: code }).then(res => {
-        const menu = res.data
-        console.log('menu :' + JSON.stringify(menu))
+      editScheduleJob({ id: id }).then(res => {
         this.form.setFieldsValue({
-          beanName: menu.beanName
+          beanName: res.data.beanName,
+          methodName: res.data.methodName,
+          params: res.data.params,
+          remark: res.data.remark,
+          id: res.data.id,
+          cronExpression: res.data.cronExpression
         })
         this.confirmLoading = false
       })
     },
     handleSubmit () {
       const { form: { validateFields } } = this
-      this.confirmLoading = true
       validateFields((errors, values) => {
         if (!errors) {
-          console.log('values', values)
+          this.confirmLoading = true
           saveScheduleJob(values).then(res => {
             this.confirmLoading = false
             if (res.status === 'success') {
@@ -139,8 +163,6 @@ export default {
           }).catch(error => {
             this.confirmLoading = false
           })
-        } else {
-          this.confirmLoading = false
         }
       })
     },

@@ -105,7 +105,7 @@
           <template>
             <a @click="run(record.id)">立即执行</a>
             <a-divider type="vertical"/>
-            <a @click="edit(record.id)">编辑</a>
+            <a @click="$refs.scheduleEdit.edit(record.id)">编辑</a>
             <a-divider type="vertical"/>
             <a-dropdown>
               <a class="ant-dropdown-link" href="#">
@@ -243,9 +243,6 @@ export default {
     refreshData () {
       this.$refs.table.refresh()
     },
-    edit (id) {
-      this.$refs.edit.edit(id)
-    },
     run (id) {
       runScheduleJob({ id: id }).then(res => {
         if (res.status === 'success') {
@@ -257,6 +254,7 @@ export default {
       pauseScheduleJob({ id: id }).then(res => {
         if (res.status === 'success') {
           this.$message.success('任务已禁用')
+          this.refreshData()
         }
       })
     },
@@ -264,6 +262,15 @@ export default {
       resumeScheduleJob({ id: id }).then(res => {
         if (res.status === 'success') {
           this.$message.success('任务已启用')
+          this.refreshData()
+        }
+      })
+    },
+    delete (id) {
+      deleteScheduleJob({ id: id }).then(res => {
+        if (res.status === 'success') {
+          this.$message.success('任务已删除')
+          this.refreshData()
         }
       })
     },
