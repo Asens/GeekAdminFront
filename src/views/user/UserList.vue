@@ -5,46 +5,33 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="规则编号">
-                <a-input v-model="queryParam.id" placeholder=""/>
+              <a-form-item label="用户名">
+                <a-input v-model="queryParam.username" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="使用状态">
                 <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">运行中</a-select-option>
+                  <a-select-option value="">全部</a-select-option>
+                  <a-select-option value="1">正常</a-select-option>
+                  <a-select-option value="0">异常</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="调用次数">
-                  <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
+                <a-form-item label="昵称">
+                  <a-input v-model="queryParam.name" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
-                <a-form-item label="更新日期">
-                  <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期"/>
+                <a-form-item label="注册时间起">
+                  <a-date-picker v-model="queryParam.registerTimeStart"  style="width: 100%" placeholder="注册时间起"/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select v-model="queryParam.useStatus" placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
+                <a-form-item label="注册时间止">
+                  <a-date-picker v-model="queryParam.registerTimeEnd"  style="width: 100%" placeholder="注册时间止"/>
                 </a-form-item>
               </a-col>
             </template>
@@ -199,8 +186,14 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        console.log('loadData.parameter', parameter)
-        return getUserList(Object.assign(parameter, this.queryParam))
+        Object.assign(parameter, this.queryParam)
+        if (this.queryParam.registerTimeStart) {
+          parameter.registerTimeStart = this.queryParam.registerTimeStart.format('YYYY-MM-DD')
+        }
+        if (this.queryParam.registerTimeEnd) {
+          parameter.registerTimeEnd = this.queryParam.registerTimeEnd.format('YYYY-MM-DD')
+        }
+        return getUserList(parameter)
           .then(res => {
             return res.data
           })

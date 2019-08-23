@@ -5,46 +5,28 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="规则编号">
-                <a-input v-model="queryParam.id" placeholder=""/>
+              <a-form-item label="任务名称">
+                <a-input v-model="queryParam.remark" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
-              <a-form-item label="使用状态">
-                <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">运行中</a-select-option>
+              <a-form-item label="状态">
+                <a-select v-model="queryParam.status" placeholder="请选择" default-value="">
+                  <a-select-option value="">全部</a-select-option>
+                  <a-select-option value="1">启用</a-select-option>
+                  <a-select-option value="0">禁用</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="调用次数">
-                  <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
+                <a-form-item label="bean名称">
+                  <a-input v-model="queryParam.beanName" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
-                <a-form-item label="更新日期">
-                  <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期"/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select v-model="queryParam.useStatus" placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
+                <a-form-item label="方法名称">
+                  <a-input v-model="queryParam.methodName" placeholder=""/>
                 </a-form-item>
               </a-col>
             </template>
@@ -119,7 +101,7 @@
                   <a href="javascript:;" @click="resume(record.id)">启用</a>
                 </a-menu-item>
                 <a-menu-item>
-                  <a href="javascript:;" @click="delete(record.id)">删除</a>
+                  <a href="javascript:;" @click="deleteScheduleJob(record.id)">删除</a>
                 </a-menu-item>
               </a-menu>
             </a-dropdown>
@@ -203,7 +185,6 @@ export default {
       selectedRowKeys: [],
       selectedRows: [],
 
-      // custom table alert & rowSelection
       options: {
         alert: {
           show: false,
@@ -266,7 +247,7 @@ export default {
         }
       })
     },
-    delete (id) {
+    deleteScheduleJob (id) {
       deleteScheduleJob({ id: id }).then(res => {
         if (res.status === 'success') {
           this.$message.success('任务已删除')
@@ -286,11 +267,6 @@ export default {
 </script>
 
 <style scoped>
-  .avatar{
-    width: 40px;
-    border-radius: 50%;
-    margin-right: 3px;
-  }
   .query-box{
     margin-bottom: 10px;
   }
