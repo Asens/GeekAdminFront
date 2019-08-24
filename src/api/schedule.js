@@ -8,7 +8,8 @@ const api = {
   runScheduleJob: '/api/sys/schedule/run',
   pauseScheduleJob: '/api/sys/schedule/pause',
   resumeScheduleJob: '/api/sys/schedule/resume',
-  runAllScheduleJob: '/api/sys/schedule/runAll'
+  runAllScheduleJob: '/api/sys/schedule/runAll',
+  scheduleLog: '/api/sys/schedule/log'
 }
 
 export default api
@@ -72,6 +73,14 @@ export function resumeScheduleJob (parameter) {
 export function runAllScheduleJob (parameter) {
   return axios({
     url: api.runAllScheduleJob,
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function scheduleLog (parameter) {
+  return axios({
+    url: api.scheduleLog,
     method: 'get',
     params: parameter
   })

@@ -89,6 +89,8 @@
             <a-divider type="vertical"/>
             <a @click="$refs.scheduleEdit.edit(record.id)">编辑</a>
             <a-divider type="vertical"/>
+            <a @click="$refs.scheduleLog.log(record.id)">日志</a>
+            <a-divider type="vertical"/>
             <a-dropdown>
               <a class="ant-dropdown-link" href="#">
                 更多 <a-icon type="down" />
@@ -110,13 +112,16 @@
       </s-table>
     </a-card>
     <schedule-edit ref="scheduleEdit" @ok="refreshData"/>
+    <schedule-inner-log ref="scheduleLog"/>
   </div>
 </template>
 
 <script>
 import { STable, Ellipsis } from '@/components'
+import { dateFilter } from '@/utils/util'
 import { getScheduleJobList, deleteScheduleJob, runScheduleJob, pauseScheduleJob, resumeScheduleJob } from '@/api/schedule'
 import ScheduleEdit from './ScheduleEdit'
+import ScheduleInnerLog from './ScheduleInnerLog'
 
 const statusMap = {
   0: {
@@ -132,6 +137,7 @@ const statusMap = {
 export default {
   name: 'Schedule',
   components: {
+    ScheduleInnerLog,
     ScheduleEdit,
     STable,
     Ellipsis
@@ -169,7 +175,6 @@ export default {
         {
           title: '操作',
           dataIndex: 'action',
-          width: '220px',
           scopedSlots: { customRender: 'action' }
         }
       ],
@@ -207,17 +212,7 @@ export default {
       return statusMap[type].status
     },
     dateFilter (value) {
-      const date = new Date(value)
-      const y = date.getFullYear()
-      let MM = date.getMonth() + 1
-      MM = MM < 10 ? ('0' + MM) : MM
-      let d = date.getDate()
-      d = d < 10 ? ('0' + d) : d
-      let h = date.getHours()
-      h = h < 10 ? ('0' + h) : h
-      let m = date.getMinutes()
-      m = m < 10 ? ('0' + m) : m
-      return y + '-' + MM + '-' + d + ' ' + h + ':' + m
+      return dateFilter(value)
     }
   },
   methods: {
