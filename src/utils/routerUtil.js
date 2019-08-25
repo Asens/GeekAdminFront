@@ -14,7 +14,8 @@ const constantRouterComponents = {
   MenuList: () => import('@/views/menu/MenuList'),
   RoleList: () => import('@/views/role/RoleList'),
   UserList: () => import('@/views/user/UserList'),
-  Schedule: () => import('@/views/schedule/Schedule')
+  Schedule: () => import('@/views/schedule/Schedule'),
+  ScheduleLog: () => import('@/views/schedule/ScheduleLog')
 }
 
 // 前端未找到页面路由（固定不用改）
