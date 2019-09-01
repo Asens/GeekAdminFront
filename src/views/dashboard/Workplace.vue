@@ -2,7 +2,7 @@
 <template>
   <page-view :avatar="avatar" :title="false">
     <div slot="headerContent">
-      <div class="title">{{ timeFix }}，{{ user.name }}<span class="welcome-text"></span></div>
+      <div class="title">{{ user.name }}<span class="welcome-text"></span></div>
       <div style="margin: 10px 0">欢迎来到Geek Admin</div>
     </div>
     <div slot="extra">
